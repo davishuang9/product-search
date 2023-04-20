@@ -1,10 +1,13 @@
-import { FormEvent } from "react";
+import { FormEvent, useState } from "react";
 import { RefreshType } from "@/src/components/withRefresh";
 import { Button, TextField, Typography } from "@mui/material";
 
 export default function AddProduct({ refreshData }: { refreshData: RefreshType; }) {
+  const [isLoading, setIsLoading] = useState(false);
+
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
+    setIsLoading(true);
     const { sku, name, category } = event.target as typeof event.target & {
       sku: { value: string; };
       name: { value: string; };
@@ -20,6 +23,7 @@ export default function AddProduct({ refreshData }: { refreshData: RefreshType; 
       }, body: JSON.stringify(productData)
     });
     refreshData();
+    setIsLoading(false);
   };
 
   // TODO: show error for blank fields in form -- will need to make the form controlled
@@ -30,7 +34,7 @@ export default function AddProduct({ refreshData }: { refreshData: RefreshType; 
         <TextField label="SKU" name="sku" /><br /><br />
         <TextField label="Name" name="name" /><br /><br />
         <TextField label="Category" name="category" /><br /><br />
-        <Button type="submit" variant="outlined">Create</Button>
+        <Button type="submit" variant="outlined" disabled={isLoading}>Create</Button>
       </form>
     </div>
   );
