@@ -4,10 +4,10 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 const prisma = new PrismaClient();
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  // TODO: implement GET to allow for FE components in /components to read DB
   if (req.method === "POST") {
     try {
       const { name, category, sku } = req.body;
-      console.log("product", name, category, sku);
       const product = await prisma.product.create({
         data: { name, category, sku }
       });

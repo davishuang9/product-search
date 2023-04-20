@@ -1,19 +1,18 @@
 import { FormEvent } from "react";
+import { RefreshType } from "@/src/components/withRefresh";
+import { Button, TextField, Typography } from "@mui/material";
 
-export default function AddProduct({ refreshData }: { refreshData: () => void; }) {
+export default function AddProduct({ refreshData }: { refreshData: RefreshType; }) {
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
-    const target = event.target as typeof event.target & {
+    const { sku, name, category } = event.target as typeof event.target & {
       sku: { value: string; };
       name: { value: string; };
       category: { value: string; };
     };
 
-    const productData = {
-      sku: target.sku.value,
-      name: target.name.value,
-      category: target.category.value,
-    };
+    if (!sku.value || !name.value || !category.value) return;
+    const productData = { sku: sku.value, name: name.value, category: category.value };
 
     await fetch("/api/product", {
       method: "POST", headers: {
@@ -23,14 +22,15 @@ export default function AddProduct({ refreshData }: { refreshData: () => void; }
     refreshData();
   };
 
+  // TODO: show error for blank fields in form -- will need to make the form controlled
   return (
     <div>
-      <div>Add a product</div>
+      <Typography variant="h5">Add a product</Typography><br />
       <form onSubmit={handleSubmit}>
-        <label>SKU: <input type="text" name="sku" /></label><br />
-        <label>Name: <input type="text" name="name" /></label><br />
-        <label>Category: <input type="text" name="category" /></label><br />
-        <input type="submit" value="Create" />
+        <TextField label="SKU" name="sku" /><br /><br />
+        <TextField label="Name" name="name" /><br /><br />
+        <TextField label="Category" name="category" /><br /><br />
+        <Button type="submit" variant="outlined">Create</Button>
       </form>
     </div>
   );
